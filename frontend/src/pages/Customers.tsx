@@ -82,6 +82,7 @@ export function Customers() {
   const { data: customers = [], isLoading } = useQuery({
     queryKey: ['customers', search],
     queryFn: () => customersApi.getAll({ search: search || undefined }),
+    select: (data): Customer[] => Array.isArray(data) ? data as Customer[] : [],
   })
 
   const {

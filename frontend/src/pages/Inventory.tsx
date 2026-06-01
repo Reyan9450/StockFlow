@@ -65,6 +65,7 @@ export function Inventory() {
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['products'],
     queryFn: () => productsApi.getAll(),
+    select: (data): Product[] => Array.isArray(data) ? data as Product[] : [],
   })
 
   const sections = buildWarehouseSections(products as Product[])

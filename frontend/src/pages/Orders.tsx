@@ -12,7 +12,6 @@ import { Modal } from '@/components/ui/Modal'
 import { Badge } from '@/components/ui/Badge'
 import { formatCurrency, formatDateTime, getOrderStatusConfig, getInitials, generateAvatarColor } from '@/lib/utils'
 import type { Order, Customer, Product } from '@/types'
-
 const orderSchema = z.object({
   customer_id: z.coerce.number().min(1, 'Select a customer'),
   status: z.string().default('pending'),
@@ -131,16 +130,19 @@ export function Orders() {
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['orders', statusFilter],
     queryFn: () => ordersApi.getAll({ status: statusFilter || undefined }),
+    select: (data): Order[] => Array.isArray(data) ? data as Order[] : [],
   })
 
   const { data: customers = [] } = useQuery({
     queryKey: ['customers'],
     queryFn: () => customersApi.getAll(),
+    select: (data): Customer[] => Array.isArray(data) ? data as Customer[] : [],
   })
 
   const { data: products = [] } = useQuery({
     queryKey: ['products'],
     queryFn: () => productsApi.getAll(),
+    select: (data): Product[] => Array.isArray(data) ? data as Product[] : [],
   })
 
   const {

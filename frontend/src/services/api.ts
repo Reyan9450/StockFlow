@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8001'
 
 export const api = axios.create({
   baseURL: API_BASE,
@@ -20,10 +20,17 @@ api.interceptors.response.use(
   }
 )
 
+/** Ensure the response is always an array */
+function ensureArray<T>(data: unknown): T[] {
+  if (Array.isArray(data)) return data as T[]
+  if (data && typeof data === 'object' && 'items' in data) return (data as any).items as T[]
+  return []
+}
+
 // ─── Products ─────────────────────────────────────────────────────────────────
 export const productsApi = {
   getAll: (params?: { search?: string; category?: string }) =>
-    api.get('/products', { params }).then((r) => r.data),
+    api.get('/products', { params }).then((r) => ensureArray(r.data)),
   getById: (id: number) => api.get(`/products/${id}`).then((r) => r.data),
   create: (data: unknown) => api.post('/products', data).then((r) => r.data),
   update: (id: number, data: unknown) => api.put(`/products/${id}`, data).then((r) => r.data),
@@ -33,7 +40,7 @@ export const productsApi = {
 // ─── Customers ────────────────────────────────────────────────────────────────
 export const customersApi = {
   getAll: (params?: { search?: string }) =>
-    api.get('/customers', { params }).then((r) => r.data),
+    api.get('/customers', { params }).then((r) => ensureArray(r.data)),
   getById: (id: number) => api.get(`/customers/${id}`).then((r) => r.data),
   create: (data: unknown) => api.post('/customers', data).then((r) => r.data),
   delete: (id: number) => api.delete(`/customers/${id}`).then((r) => r.data),
@@ -42,7 +49,7 @@ export const customersApi = {
 // ─── Orders ───────────────────────────────────────────────────────────────────
 export const ordersApi = {
   getAll: (params?: { status?: string }) =>
-    api.get('/orders', { params }).then((r) => r.data),
+    api.get('/orders', { params }).then((r) => ensureArray(r.data)),
   getById: (id: number) => api.get(`/orders/${id}`).then((r) => r.data),
   create: (data: unknown) => api.post('/orders', data).then((r) => r.data),
   delete: (id: number) => api.delete(`/orders/${id}`).then((r) => r.data),

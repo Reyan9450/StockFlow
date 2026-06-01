@@ -48,6 +48,7 @@ export function Products() {
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['products', search, category],
     queryFn: () => productsApi.getAll({ search: search || undefined, category: category || undefined }),
+    select: (data): Product[] => Array.isArray(data) ? data as Product[] : [],
   })
 
   const {
