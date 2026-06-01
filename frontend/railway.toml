@@ -1,11 +1,3 @@
-[build]
-builder = "dockerfile"
-dockerfilePath = "Dockerfile"
-buildArgs = { VITE_API_URL = "${{VITE_API_URL}}" }
-
 [deploy]
-startCommand = "node server.js"
 healthcheckPath = "/"
-healthcheckTimeout = 60
-restartPolicyType = "on_failure"
-restartPolicyMaxRetries = 3
+healthcheckTimeout = 30
