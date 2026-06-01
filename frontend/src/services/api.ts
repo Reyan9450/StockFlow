@@ -8,6 +8,8 @@ const API_BASE = (() => {
   }
   return url
 })()
+console.log('VITE_API_URL:', import.meta.env.VITE_API_URL)
+console.log('API_BASE:', API_BASE)
 
 export const api = axios.create({
   baseURL: API_BASE,
