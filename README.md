@@ -1,0 +1,313 @@
+# StockFlow — Inventory Management System
+
+> A production-ready, cloud-based inventory, customer, and order management platform built with React, FastAPI, and PostgreSQL.
+
+---
+
+## Overview
+
+StockFlow is a modern SaaS-grade inventory management system designed to look and feel like a commercially funded product. It features a premium dashboard, real-time stock tracking, order management, customer CRM, warehouse visualization, and analytics — all wrapped in a polished dark/light UI.
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                     Docker Compose                       │
+│                                                         │
+│  ┌──────────────┐   ┌──────────────┐   ┌────────────┐  │
+│  │   Frontend   │   │   Backend    │   │ PostgreSQL │  │
+│  │  React/Vite  │──▶│   FastAPI    │──▶│  Database  │  │
+│  │  Port: 3000  │   │  Port: 8000  │   │ Port: 5432 │  │
+│  └──────────────┘   └──────────────┘   └────────────┘  │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Frontend:** React 18 + Vite + TypeScript + Tailwind CSS + Framer Motion + Recharts  
+**Backend:** FastAPI + SQLAlchemy ORM + Pydantic v2  
+**Database:** PostgreSQL 16  
+**Containerization:** Docker + Docker Compose
+
+---
+
+## Features
+
+- **Dashboard** — KPI cards, revenue area chart, weekly orders bar chart, warehouse grid, recent orders table, low stock alerts
+- **Products** — Full CRUD with search, category filter, stock status badges, SKU uniqueness enforcement
+- **Customers** — CRM-style card/table view toggle, customer profiles with order counts
+- **Orders** — Create orders with multi-item support, automatic stock reduction, expandable order cards
+- **Inventory** — Warehouse floor plan visualization (A1–D6), utilization gauge, stock distribution chart
+- **Analytics** — Revenue trend, orders trend, customer growth, top products, inventory turnover
+- **Settings** — Profile, theme (dark/light), notifications, API settings, security
+- **Dark Mode** — Full dark theme persisted in localStorage
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- Node.js 20+ (for local development)
+- Python 3.11+ (for local development)
+
+### Docker (Recommended)
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/your-username/stockflow.git
+cd stockflow
+
+# 2. Copy environment file
+cp .env.example .env
+
+# 3. Start all services
+docker compose up --build
+
+# 4. Open the app
+# Frontend: http://localhost:3000
+# API Docs: http://localhost:8000/docs
+```
+
+The database is seeded automatically with sample products, customers, and orders on first run.
+
+---
+
+### Local Development
+
+#### Backend
+
+```bash
+cd backend
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set up environment
+cp .env.example .env
+# Edit .env with your local PostgreSQL credentials
+
+# Start the server
+uvicorn app.main:app --reload --port 8000
+
+# Seed sample data (optional)
+python -m app.seed
+```
+
+#### Frontend
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Set up environment
+cp .env.example .env
+# VITE_API_URL=http://localhost:8000
+
+# Start dev server
+npm run dev
+# Open http://localhost:5173
+```
+
+---
+
+## Environment Variables
+
+### Backend (`backend/.env`)
+
+| Variable | Description | Default |
+|---|---|---|
+| `DATABASE_URL` | PostgreSQL connection string | `postgresql://stockflow:stockflow123@localhost:5432/stockflow_db` |
+| `SECRET_KEY` | JWT/session secret key | `supersecretkey-change-in-production` |
+| `CORS_ORIGINS` | Comma-separated allowed origins | `http://localhost:5173,http://localhost:3000` |
+
+### Frontend (`frontend/.env`)
+
+| Variable | Description | Default |
+|---|---|---|
+| `VITE_API_URL` | Backend API base URL | `http://localhost:8000` |
+
+---
+
+## API Documentation
+
+Interactive API docs are available at:
+- **Swagger UI:** `http://localhost:8000/docs`
+- **ReDoc:** `http://localhost:8000/redoc`
+
+### Endpoints
+
+#### Products
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/products` | List all products (supports `?search=` and `?category=`) |
+| `POST` | `/products` | Create a new product |
+| `GET` | `/products/{id}` | Get product by ID |
+| `PUT` | `/products/{id}` | Update product |
+| `DELETE` | `/products/{id}` | Delete product |
+
+#### Customers
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/customers` | List all customers (supports `?search=`) |
+| `POST` | `/customers` | Create a new customer |
+| `GET` | `/customers/{id}` | Get customer by ID |
+| `DELETE` | `/customers/{id}` | Delete customer |
+
+#### Orders
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/orders` | List all orders (supports `?status=`) |
+| `POST` | `/orders` | Create a new order (auto-reduces stock) |
+| `GET` | `/orders/{id}` | Get order by ID |
+| `DELETE` | `/orders/{id}` | Delete order (auto-restores stock) |
+
+#### Dashboard
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/dashboard/stats` | Get KPI stats, low stock, recent orders |
+
+### Business Rules
+
+- **SKU Uniqueness** — Duplicate SKUs are rejected with `409 Conflict`
+- **Email Uniqueness** — Duplicate customer emails are rejected with `409 Conflict`
+- **Non-negative Quantities** — Validated at API level with `422 Unprocessable Entity`
+- **Stock Validation** — Orders are rejected if requested quantity exceeds available stock
+- **Automatic Stock Reduction** — Stock is reduced atomically when an order is created
+- **Automatic Total Calculation** — Backend calculates order totals; frontend values are ignored
+
+---
+
+## Deployment
+
+### Backend → Render
+
+1. Create a new **Web Service** on [Render](https://render.com)
+2. Connect your GitHub repository
+3. Set **Root Directory** to `backend`
+4. Set **Build Command:** `pip install -r requirements.txt`
+5. Set **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+6. Add environment variables:
+   - `DATABASE_URL` — your Render PostgreSQL URL
+   - `SECRET_KEY` — a strong random string
+   - `CORS_ORIGINS` — your Vercel frontend URL
+
+### Frontend → Vercel
+
+1. Import your repository on [Vercel](https://vercel.com)
+2. Set **Root Directory** to `frontend`
+3. Set **Framework Preset** to `Vite`
+4. Add environment variable:
+   - `VITE_API_URL` — your Render backend URL
+
+---
+
+## Project Structure
+
+```
+stockflow/
+├── backend/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── config.py          # Settings via pydantic-settings
+│   │   ├── database.py        # SQLAlchemy engine & session
+│   │   ├── main.py            # FastAPI app, CORS, routers
+│   │   ├── models.py          # SQLAlchemy ORM models
+│   │   ├── schemas.py         # Pydantic request/response schemas
+│   │   ├── seed.py            # Sample data seeder
+│   │   └── routers/
+│   │       ├── products.py
+│   │       ├── customers.py
+│   │       ├── orders.py
+│   │       └── dashboard.py
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── start.sh
+│
+├── frontend/
+│   ├── src/
+│   │   ├── App.tsx            # Router setup
+│   │   ├── main.tsx           # React entry point
+│   │   ├── index.css          # Tailwind + CSS variables
+│   │   ├── components/
+│   │   │   ├── layout/        # AppLayout, Sidebar, TopNav
+│   │   │   └── ui/            # Button, Modal, Input, Badge, Skeleton, StatCard
+│   │   ├── hooks/
+│   │   │   └── useTheme.ts    # Dark/light mode hook
+│   │   ├── lib/
+│   │   │   └── utils.ts       # Formatters, helpers
+│   │   ├── pages/
+│   │   │   ├── Dashboard.tsx
+│   │   │   ├── Products.tsx
+│   │   │   ├── Customers.tsx
+│   │   │   ├── Orders.tsx
+│   │   │   ├── Inventory.tsx
+│   │   │   ├── Analytics.tsx
+│   │   │   ├── Settings.tsx
+│   │   │   └── Help.tsx
+│   │   ├── services/
+│   │   │   └── api.ts         # Axios API client
+│   │   └── types/
+│   │       └── index.ts       # TypeScript interfaces
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   ├── tailwind.config.js
+│   └── vite.config.ts
+│
+├── docker-compose.yml
+├── .env.example
+└── README.md
+```
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend Framework | React 18 + TypeScript |
+| Build Tool | Vite 5 |
+| Styling | Tailwind CSS 3 + CSS Variables |
+| Animations | Framer Motion |
+| Charts | Recharts |
+| State Management | TanStack Query (React Query) |
+| Forms | React Hook Form + Zod |
+| HTTP Client | Axios |
+| Notifications | Sonner |
+| Backend Framework | FastAPI |
+| ORM | SQLAlchemy 2.0 |
+| Validation | Pydantic v2 |
+| Database | PostgreSQL 16 |
+| Containerization | Docker + Docker Compose |
+| Web Server | Nginx (production) |
+
+---
+
+## Future Improvements
+
+- [ ] JWT authentication with role-based access control
+- [ ] Alembic database migrations
+- [ ] CSV/Excel export for products, orders, customers
+- [ ] Order status update (PATCH endpoint)
+- [ ] Email notifications for low stock and new orders
+- [ ] Barcode/QR code scanning support
+- [ ] Multi-warehouse support
+- [ ] Supplier management module
+- [ ] Purchase order (PO) workflow
+- [ ] Real-time updates via WebSockets
+- [ ] Mobile app (React Native)
+- [ ] Advanced reporting with date range filters
+- [ ] Bulk import via CSV
+
+---
+
+## License
+
+MIT © StockFlow

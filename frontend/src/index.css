@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 213 50% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 213 50% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 213 50% 20%;
+    --primary: 213 60% 20%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 213 50% 20%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 43 90% 62%;
+    --accent-foreground: 213 60% 15%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 213 60% 20%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 213 70% 8%;
+    --foreground: 213 20% 90%;
+    --card: 213 60% 12%;
+    --card-foreground: 213 20% 90%;
+    --popover: 213 60% 10%;
+    --popover-foreground: 213 20% 90%;
+    --primary: 43 90% 62%;
+    --primary-foreground: 213 60% 10%;
+    --secondary: 213 50% 16%;
+    --secondary-foreground: 213 20% 90%;
+    --muted: 213 50% 16%;
+    --muted-foreground: 215 20% 55%;
+    --accent: 43 90% 62%;
+    --accent-foreground: 213 60% 10%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 213 40% 20%;
+    --input: 213 40% 20%;
+    --ring: 43 90% 62%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer utilities {
+  .glass {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  .dark .glass {
+    background: rgba(16, 36, 58, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .gradient-navy {
+    background: linear-gradient(135deg, #16324f 0%, #1e4d7b 100%);
+  }
+  .gradient-golden {
+    background: linear-gradient(135deg, #f4c542 0%, #e6a820 100%);
+  }
+  .gradient-success {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  }
+  .gradient-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  }
+  .gradient-purple {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  }
+  .shimmer-bg {
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+    background-size: 200% 100%;
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(100, 116, 139, 0.3) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(100, 116, 139, 0.3);
+    border-radius: 2px;
+  }
+}
+
+/* Custom scrollbar for sidebar */
+.sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+.sidebar-scroll::-webkit-scrollbar {
+  width: 3px;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 2px;
+}
+
+/* Recharts custom styles */
+.recharts-tooltip-wrapper {
+  outline: none !important;
+}
+.recharts-default-tooltip {
+  border-radius: 12px !important;
+  border: 1px solid rgba(0,0,0,0.06) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+}
