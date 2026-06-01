@@ -1,25 +1,25 @@
-# ── Build stage ───────────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-RUN npm install --frozen-lockfile 2>/dev/null || npm install
+COPY package*.json ./
+RUN npm install
 
 COPY . .
 
-ARG VITE_API_URL=http://localhost:8000
+ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
 
 RUN npm run build
 
-# ── Production stage ──────────────────────────────────────────────────────────
-FROM nginx:alpine
+# ── Runtime ───────────────────────────────────────────────────────────────────
+FROM node:20-alpine
 
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/templates/default.conf.template
+WORKDIR /app
 
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/server.js ./server.js
 
-EXPOSE 80
+EXPOSE 3000
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", "server.js"]
