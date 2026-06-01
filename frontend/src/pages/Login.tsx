@@ -27,7 +27,6 @@ type LoginForm = z.infer<typeof loginSchema>
 type SignupForm = z.infer<typeof signupSchema>
 
 const DEMO_CREDENTIALS = [
-  { label: 'Admin', email: 'admin@Stockify.io', password: 'admin123', role: 'Super Admin', color: 'from-violet-500 to-purple-600' },
   { label: 'Manager', email: 'manager@Stockify.io', password: 'manager123', role: 'Inventory Manager', color: 'from-blue-500 to-cyan-600' },
   { label: 'Viewer', email: 'viewer@Stockify.io', password: 'viewer123', role: 'Read Only', color: 'from-emerald-500 to-teal-600' },
 ]
@@ -203,7 +202,7 @@ export function AuthPage({ onLogin }: AuthProps) {
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                     Quick Demo Access
                   </p>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 gap-2">
                     {DEMO_CREDENTIALS.map((cred) => (
                       <motion.button
                         key={cred.label}

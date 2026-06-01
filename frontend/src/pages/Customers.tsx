@@ -21,7 +21,7 @@ const customerSchema = z.object({
 
 type CustomerFormData = z.infer<typeof customerSchema>
 
-function CustomerCard({ customer, onDelete }: { customer: Customer; onDelete: () => void }) {
+function CustomerCard({ customer, onDelete, canEdit }: { customer: Customer; onDelete: () => void; canEdit: boolean }) {
   const avatarGradient = generateAvatarColor(customer.full_name)
   const initials = getInitials(customer.full_name)
 
@@ -39,7 +39,7 @@ function CustomerCard({ customer, onDelete }: { customer: Customer; onDelete: ()
         <motion.button
           whileTap={{ scale: 0.95 }}
           onClick={onDelete}
-          className="p-2 rounded-xl opacity-0 group-hover:opacity-100 hover:bg-red-50 dark:hover:bg-red-950/30 text-muted-foreground hover:text-red-600 transition-all"
+          className={`p-2 rounded-xl opacity-0 group-hover:opacity-100 hover:bg-red-50 dark:hover:bg-red-950/30 text-muted-foreground hover:text-red-600 transition-all ${!canEdit ? 'hidden' : ''}`}
         >
           <Trash2 className="w-3.5 h-3.5" />
         </motion.button>
@@ -72,7 +72,7 @@ function CustomerCard({ customer, onDelete }: { customer: Customer; onDelete: ()
   )
 }
 
-export function Customers() {
+export function Customers({ canEdit = true }: { canEdit?: boolean }) {
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
@@ -131,9 +131,11 @@ export function Customers() {
           <h1 className="text-3xl font-heading font-bold text-foreground">Customers</h1>
           <p className="text-muted-foreground mt-1">Manage your customer relationships</p>
         </div>
-        <Button icon={<Plus className="w-4 h-4" />} onClick={() => setModalOpen(true)}>
-          Add Customer
-        </Button>
+        {canEdit && (
+          <Button icon={<Plus className="w-4 h-4" />} onClick={() => setModalOpen(true)}>
+            Add Customer
+          </Button>
+        )}
       </motion.div>
 
       {/* Filters */}
@@ -197,9 +199,11 @@ export function Customers() {
           </div>
           <p className="text-lg font-semibold text-foreground">No customers yet</p>
           <p className="text-muted-foreground text-sm">Add your first customer to get started</p>
-          <Button icon={<Plus className="w-4 h-4" />} onClick={() => setModalOpen(true)}>
-            Add Customer
-          </Button>
+          {canEdit && (
+            <Button icon={<Plus className="w-4 h-4" />} onClick={() => setModalOpen(true)}>
+              Add Customer
+            </Button>
+          )}
         </motion.div>
       ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -207,6 +211,7 @@ export function Customers() {
             <CustomerCard
               key={customer.id}
               customer={customer}
+              canEdit={canEdit}
               onDelete={() => setDeleteConfirm(customer)}
             />
           ))}
@@ -252,13 +257,15 @@ export function Customers() {
                     <td className="px-5 py-4 text-sm font-semibold text-foreground">{customer.total_orders ?? 0}</td>
                     <td className="px-5 py-4 text-sm text-muted-foreground">{formatDate(customer.created_at)}</td>
                     <td className="px-5 py-4">
-                      <motion.button
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setDeleteConfirm(customer)}
-                        className="p-2 rounded-xl opacity-0 group-hover:opacity-100 hover:bg-red-50 dark:hover:bg-red-950/30 text-muted-foreground hover:text-red-600 transition-all"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </motion.button>
+                      {canEdit && (
+                        <motion.button
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => setDeleteConfirm(customer)}
+                          className="p-2 rounded-xl opacity-0 group-hover:opacity-100 hover:bg-red-50 dark:hover:bg-red-950/30 text-muted-foreground hover:text-red-600 transition-all"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </motion.button>
+                      )}
                     </td>
                   </motion.tr>
                 )

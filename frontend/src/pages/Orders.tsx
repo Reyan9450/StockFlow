@@ -27,7 +27,7 @@ const orderSchema = z.object({
 
 type OrderFormData = z.infer<typeof orderSchema>
 
-function OrderCard({ order, onDelete }: { order: Order; onDelete: () => void }) {
+function OrderCard({ order, onDelete, canEdit }: { order: Order; onDelete: () => void; canEdit: boolean }) {
   const [expanded, setExpanded] = useState(false)
   const statusCfg = getOrderStatusConfig(order.status)
   const initials = order.customer ? getInitials(order.customer.full_name) : '?'
@@ -80,13 +80,15 @@ function OrderCard({ order, onDelete }: { order: Order; onDelete: () => void }) 
               >
                 {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </motion.button>
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={onDelete}
-                className="p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/30 text-muted-foreground hover:text-red-600 transition-colors"
-              >
-                <Trash2 className="w-4 h-4" />
-              </motion.button>
+              {canEdit && (
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={onDelete}
+                  className="p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/30 text-muted-foreground hover:text-red-600 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </motion.button>
+              )}
             </div>
           </div>
         </div>
@@ -120,7 +122,7 @@ function OrderCard({ order, onDelete }: { order: Order; onDelete: () => void }) 
   )
 }
 
-export function Orders() {
+export function Orders({ canEdit = true }: { canEdit?: boolean }) {
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
@@ -226,9 +228,11 @@ export function Orders() {
           <h1 className="text-3xl font-heading font-bold text-foreground">Orders</h1>
           <p className="text-muted-foreground mt-1">Track and manage customer orders</p>
         </div>
-        <Button icon={<Plus className="w-4 h-4" />} onClick={() => setModalOpen(true)}>
-          New Order
-        </Button>
+        {canEdit && (
+          <Button icon={<Plus className="w-4 h-4" />} onClick={() => setModalOpen(true)}>
+            New Order
+          </Button>
+        )}
       </motion.div>
 
       {/* Stats strip */}
@@ -310,14 +314,16 @@ export function Orders() {
           </div>
           <p className="text-lg font-semibold text-foreground">No orders found</p>
           <p className="text-muted-foreground text-sm">Create your first order to get started</p>
-          <Button icon={<Plus className="w-4 h-4" />} onClick={() => setModalOpen(true)}>
-            New Order
-          </Button>
+          {canEdit && (
+            <Button icon={<Plus className="w-4 h-4" />} onClick={() => setModalOpen(true)}>
+              New Order
+            </Button>
+          )}
         </motion.div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filteredOrders.map((order: Order) => (
-            <OrderCard key={order.id} order={order} onDelete={() => setDeleteConfirm(order)} />
+            <OrderCard key={order.id} order={order} canEdit={canEdit} onDelete={() => setDeleteConfirm(order)} />
           ))}
         </div>
       )}

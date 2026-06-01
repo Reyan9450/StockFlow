@@ -30,5 +30,9 @@ export function useAuth() {
     setUser(null)
   }
 
-  return { user, login, logout, isAuthenticated: user !== null }
+  // Viewer role = read-only, Manager = full access
+  const isViewer = user?.role === 'Read Only'
+  const canEdit = !isViewer
+
+  return { user, login, logout, isAuthenticated: user !== null, isViewer, canEdit }
 }
