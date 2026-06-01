@@ -1,12 +1,31 @@
-# StockFlow — Inventory Management System
+# Stockify — Inventory Management System
 
 > A production-ready, cloud-based inventory, customer, and order management platform built with React, FastAPI, and PostgreSQL.
+
+![Stockify Dashboard](https://img.shields.io/badge/Status-Live-brightgreen) ![Version](https://img.shields.io/badge/Version-1.0.0-blue) ![License](https://img.shields.io/badge/License-MIT-yellow)
+
+---
+
+## 🔗 Live Demo
+
+| Service | URL |
+|---|---|
+| **Frontend (Vercel)** | [stock-flow-sage-two.vercel.app](https://stock-flow-sage-two.vercel.app) |
+| **Backend API (Railway)** | [hopeful-creativity-production-a7d1.up.railway.app](https://hopeful-creativity-production-a7d1.up.railway.app) |
+| **API Docs (Swagger)** | [/docs](https://hopeful-creativity-production-a7d1.up.railway.app/docs) |
+
+### Demo Credentials
+
+| Role | Email | Password | Access |
+|---|---|---|---|
+| Manager | `manager@stockify.io` | `manager123` | Full access — create, edit, delete |
+| Viewer | `viewer@stockify.io` | `viewer123` | Read-only — view data only |
 
 ---
 
 ## Overview
 
-StockFlow is a modern SaaS-grade inventory management system designed to look and feel like a commercially funded product. It features a premium dashboard, real-time stock tracking, order management, customer CRM, warehouse visualization, and analytics — all wrapped in a polished dark/light UI.
+Stockify is a modern SaaS-grade inventory management system designed to look and feel like a commercially funded product. It features a premium dashboard, real-time stock tracking, order management, customer CRM, warehouse visualization, and analytics — all wrapped in a polished dark/light UI with role-based access control.
 
 ---
 
@@ -19,7 +38,7 @@ StockFlow is a modern SaaS-grade inventory management system designed to look an
 │  ┌──────────────┐   ┌──────────────┐   ┌────────────┐  │
 │  │   Frontend   │   │   Backend    │   │ PostgreSQL │  │
 │  │  React/Vite  │──▶│   FastAPI    │──▶│  Database  │  │
-│  │  Port: 3000  │   │  Port: 8000  │   │ Port: 5432 │  │
+│  │  Port: 3001  │   │  Port: 8001  │   │ Port: 5433 │  │
 │  └──────────────┘   └──────────────┘   └────────────┘  │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -27,7 +46,8 @@ StockFlow is a modern SaaS-grade inventory management system designed to look an
 **Frontend:** React 18 + Vite + TypeScript + Tailwind CSS + Framer Motion + Recharts  
 **Backend:** FastAPI + SQLAlchemy ORM + Pydantic v2  
 **Database:** PostgreSQL 16  
-**Containerization:** Docker + Docker Compose
+**Containerization:** Docker + Docker Compose  
+**Deployment:** Vercel (frontend) + Railway (backend + database)
 
 ---
 
@@ -41,6 +61,7 @@ StockFlow is a modern SaaS-grade inventory management system designed to look an
 - **Analytics** — Revenue trend, orders trend, customer growth, top products, inventory turnover
 - **Settings** — Profile, theme (dark/light), notifications, API settings, security
 - **Dark Mode** — Full dark theme persisted in localStorage
+- **Role-Based Access** — Manager (full access) and Viewer (read-only) roles
 
 ---
 
@@ -56,8 +77,8 @@ StockFlow is a modern SaaS-grade inventory management system designed to look an
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/stockflow.git
-cd stockflow
+git clone https://github.com/Reyan9450/StockFlow.git
+cd StockFlow
 
 # 2. Copy environment file
 cp .env.example .env
@@ -66,8 +87,8 @@ cp .env.example .env
 docker compose up --build
 
 # 4. Open the app
-# Frontend: http://localhost:3000
-# API Docs: http://localhost:8000/docs
+# Frontend: http://localhost:3001
+# API Docs: http://localhost:8001/docs
 ```
 
 The database is seeded automatically with sample products, customers, and orders on first run.
@@ -125,22 +146,22 @@ npm run dev
 | Variable | Description | Default |
 |---|---|---|
 | `DATABASE_URL` | PostgreSQL connection string | `postgresql://stockflow:stockflow123@localhost:5432/stockflow_db` |
-| `SECRET_KEY` | JWT/session secret key | `supersecretkey-change-in-production` |
-| `CORS_ORIGINS` | Comma-separated allowed origins | `http://localhost:5173,http://localhost:3000` |
+| `SECRET_KEY` | Session secret key | `supersecretkey-change-in-production` |
+| `CORS_ORIGINS` | Comma-separated allowed origins | `http://localhost:5173,http://localhost:3001` |
 
 ### Frontend (`frontend/.env`)
 
 | Variable | Description | Default |
 |---|---|---|
-| `VITE_API_URL` | Backend API base URL | `http://localhost:8000` |
+| `VITE_API_URL` | Backend API base URL | `http://localhost:8001` |
 
 ---
 
 ## API Documentation
 
-Interactive API docs are available at:
-- **Swagger UI:** `http://localhost:8000/docs`
-- **ReDoc:** `http://localhost:8000/redoc`
+Interactive API docs available at:
+- **Swagger UI:** `https://hopeful-creativity-production-a7d1.up.railway.app/docs`
+- **ReDoc:** `https://hopeful-creativity-production-a7d1.up.railway.app/redoc`
 
 ### Endpoints
 
@@ -176,46 +197,45 @@ Interactive API docs are available at:
 
 ### Business Rules
 
-- **SKU Uniqueness** — Duplicate SKUs are rejected with `409 Conflict`
-- **Email Uniqueness** — Duplicate customer emails are rejected with `409 Conflict`
+- **SKU Uniqueness** — Duplicate SKUs rejected with `409 Conflict`
+- **Email Uniqueness** — Duplicate customer emails rejected with `409 Conflict`
 - **Non-negative Quantities** — Validated at API level with `422 Unprocessable Entity`
-- **Stock Validation** — Orders are rejected if requested quantity exceeds available stock
-- **Automatic Stock Reduction** — Stock is reduced atomically when an order is created
+- **Stock Validation** — Orders rejected if requested quantity exceeds available stock
+- **Automatic Stock Reduction** — Stock reduced atomically when an order is created
 - **Automatic Total Calculation** — Backend calculates order totals; frontend values are ignored
 
 ---
 
 ## Deployment
 
-### Backend → Render
-
-1. Create a new **Web Service** on [Render](https://render.com)
-2. Connect your GitHub repository
-3. Set **Root Directory** to `backend`
-4. Set **Build Command:** `pip install -r requirements.txt`
-5. Set **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-6. Add environment variables:
-   - `DATABASE_URL` — your Render PostgreSQL URL
-   - `SECRET_KEY` — a strong random string
-   - `CORS_ORIGINS` — your Vercel frontend URL
-
 ### Frontend → Vercel
 
-1. Import your repository on [Vercel](https://vercel.com)
-2. Set **Root Directory** to `frontend`
-3. Set **Framework Preset** to `Vite`
+1. Import repo on [Vercel](https://vercel.com)
+2. Set **Root Directory** → `frontend`
+3. Set **Framework Preset** → `Vite`
 4. Add environment variable:
-   - `VITE_API_URL` — your Render backend URL
+   - `VITE_API_URL` → your Railway backend URL (must be `https://`)
+5. Deploy
+
+### Backend → Railway
+
+1. Create new project on [Railway](https://railway.app)
+2. Add **PostgreSQL** plugin — Railway injects `DATABASE_URL` automatically
+3. Deploy backend service with **Root Directory** → `backend`
+4. Add environment variables:
+   - `DATABASE_URL` → reference from Postgres plugin
+   - `SECRET_KEY` → any random string
+   - `CORS_ORIGINS` → your Vercel frontend URL
+5. After deploy, seed data via Railway Shell: `python -m app.seed`
 
 ---
 
 ## Project Structure
 
 ```
-stockflow/
+stockify/
 ├── backend/
 │   ├── app/
-│   │   ├── __init__.py
 │   │   ├── config.py          # Settings via pydantic-settings
 │   │   ├── database.py        # SQLAlchemy engine & session
 │   │   ├── main.py            # FastAPI app, CORS, routers
@@ -228,21 +248,18 @@ stockflow/
 │   │       ├── orders.py
 │   │       └── dashboard.py
 │   ├── Dockerfile
-│   ├── requirements.txt
-│   └── start.sh
+│   ├── railway.toml
+│   └── requirements.txt
 │
 ├── frontend/
 │   ├── src/
-│   │   ├── App.tsx            # Router setup
-│   │   ├── main.tsx           # React entry point
-│   │   ├── index.css          # Tailwind + CSS variables
+│   │   ├── App.tsx            # Router + auth gate
 │   │   ├── components/
 │   │   │   ├── layout/        # AppLayout, Sidebar, TopNav
 │   │   │   └── ui/            # Button, Modal, Input, Badge, Skeleton, StatCard
 │   │   ├── hooks/
-│   │   │   └── useTheme.ts    # Dark/light mode hook
-│   │   ├── lib/
-│   │   │   └── utils.ts       # Formatters, helpers
+│   │   │   ├── useAuth.ts     # Auth state + role-based access
+│   │   │   └── useTheme.ts    # Dark/light mode
 │   │   ├── pages/
 │   │   │   ├── Dashboard.tsx
 │   │   │   ├── Products.tsx
@@ -251,14 +268,16 @@ stockflow/
 │   │   │   ├── Inventory.tsx
 │   │   │   ├── Analytics.tsx
 │   │   │   ├── Settings.tsx
-│   │   │   └── Help.tsx
+│   │   │   ├── Help.tsx
+│   │   │   └── Login.tsx
 │   │   ├── services/
 │   │   │   └── api.ts         # Axios API client
 │   │   └── types/
 │   │       └── index.ts       # TypeScript interfaces
 │   ├── Dockerfile
 │   ├── nginx.conf
-│   ├── tailwind.config.js
+│   ├── vercel.json
+│   ├── railway.toml
 │   └── vite.config.ts
 │
 ├── docker-compose.yml
@@ -286,13 +305,15 @@ stockflow/
 | Validation | Pydantic v2 |
 | Database | PostgreSQL 16 |
 | Containerization | Docker + Docker Compose |
-| Web Server | Nginx (production) |
+| Frontend Hosting | Vercel |
+| Backend Hosting | Railway |
+| Web Server | Nginx (Docker) |
 
 ---
 
 ## Future Improvements
 
-- [ ] JWT authentication with role-based access control
+- [ ] JWT authentication with proper token-based auth
 - [ ] Alembic database migrations
 - [ ] CSV/Excel export for products, orders, customers
 - [ ] Order status update (PATCH endpoint)
@@ -310,4 +331,4 @@ stockflow/
 
 ## License
 
-MIT © StockFlow
+MIT © Stockify
