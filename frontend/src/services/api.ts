@@ -1,6 +1,13 @@
 import axios from 'axios'
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8001'
+const API_BASE = (() => {
+  const url = import.meta.env.VITE_API_URL || 'http://localhost:8001'
+  // Force https in production to avoid mixed content errors
+  if (window.location.protocol === 'https:' && url.startsWith('http:')) {
+    return url.replace('http:', 'https:')
+  }
+  return url
+})()
 
 export const api = axios.create({
   baseURL: API_BASE,

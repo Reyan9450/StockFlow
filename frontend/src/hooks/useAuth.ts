@@ -6,7 +6,7 @@ export interface AuthUser {
   role: string
 }
 
-const STORAGE_KEY = 'stockflow_user'
+const STORAGE_KEY = 'stockify_user'
 
 function getStoredUser(): AuthUser | null {
   try {

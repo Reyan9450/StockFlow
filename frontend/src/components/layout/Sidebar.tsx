@@ -73,7 +73,7 @@ export function Sidebar({ isOpen, onClose, onLogout }: SidebarProps) {
               <Zap className="w-5 h-5 text-navy-900" strokeWidth={2.5} />
             </div>
             <div>
-              <h1 className="text-white font-heading font-bold text-lg leading-none">StockFlow</h1>
+              <h1 className="text-white font-heading font-bold text-lg leading-none">Stockify</h1>
               <p className="text-white/40 text-xs mt-0.5">Inventory Platform</p>
             </div>
           </div>
@@ -168,7 +168,7 @@ export function Sidebar({ isOpen, onClose, onLogout }: SidebarProps) {
         {/* Version badge */}
         <div className="px-6 py-4">
           <div className="bg-white/5 rounded-xl p-3 text-center">
-            <p className="text-white/30 text-xs">StockFlow v1.0.0</p>
+            <p className="text-white/30 text-xs">Stockify v1.0.0</p>
             <p className="text-white/20 text-xs mt-0.5">Production Ready</p>
           </div>
         </div>

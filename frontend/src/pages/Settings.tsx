@@ -38,16 +38,16 @@ function ProfileTab() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input label="First Name" defaultValue="Admin" />
         <Input label="Last Name" defaultValue="User" />
-        <Input label="Email" type="email" defaultValue="admin@stockflow.io" />
+        <Input label="Email" type="email" defaultValue="admin@stockify.io" />
         <Input label="Phone" defaultValue="+1-555-0100" />
-        <Input label="Company" defaultValue="StockFlow Inc." />
+        <Input label="Company" defaultValue="Stockify Inc." />
         <Input label="Role" defaultValue="Super Admin" />
       </div>
       <div className="space-y-1.5">
         <label className="text-sm font-medium text-foreground">Bio</label>
         <textarea
           rows={3}
-          defaultValue="Managing inventory and operations at StockFlow."
+          defaultValue="Managing inventory and operations at Stockify."
           className="w-full px-3.5 py-2.5 rounded-2xl text-sm bg-muted/50 border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
         />
       </div>
@@ -77,7 +77,7 @@ function ThemeTab() {
     <div className="space-y-8">
       <div>
         <h3 className="font-semibold text-foreground mb-1">Color Mode</h3>
-        <p className="text-sm text-muted-foreground mb-4">Choose how StockFlow looks to you</p>
+        <p className="text-sm text-muted-foreground mb-4">Choose how Stockify looks to you</p>
         <div className="grid grid-cols-3 gap-3">
           {themes.map((t) => {
             const isActive = t.id === 'system' ? false : theme === t.id
@@ -223,7 +223,7 @@ function NotificationsTab() {
 
 function ApiTab() {
   const [copied, setCopied] = useState(false)
-  const apiKey = 'sk_live_stockflow_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6'
+  const apiKey = 'sk_live_stockify_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6'
   const copy = () => {
     navigator.clipboard.writeText(apiKey)
     setCopied(true)

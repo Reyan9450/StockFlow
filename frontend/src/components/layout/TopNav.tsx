@@ -139,7 +139,7 @@ export function TopNav({ onMenuClick, pageTitle, user, onLogout }: TopNavProps) 
             >
               <div className="px-3 py-2 mb-1">
                 <p className="text-sm font-semibold text-foreground">{user?.name ?? 'Admin User'}</p>
-                <p className="text-xs text-muted-foreground">{user?.email ?? 'admin@stockflow.io'}</p>
+                <p className="text-xs text-muted-foreground">{user?.email ?? 'admin@stockify.io'}</p>
               </div>
               <div className="border-t border-border my-1" />
               {[

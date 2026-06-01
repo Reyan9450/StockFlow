@@ -27,9 +27,9 @@ type LoginForm = z.infer<typeof loginSchema>
 type SignupForm = z.infer<typeof signupSchema>
 
 const DEMO_CREDENTIALS = [
-  { label: 'Admin', email: 'admin@stockflow.io', password: 'admin123', role: 'Super Admin', color: 'from-violet-500 to-purple-600' },
-  { label: 'Manager', email: 'manager@stockflow.io', password: 'manager123', role: 'Inventory Manager', color: 'from-blue-500 to-cyan-600' },
-  { label: 'Viewer', email: 'viewer@stockflow.io', password: 'viewer123', role: 'Read Only', color: 'from-emerald-500 to-teal-600' },
+  { label: 'Admin', email: 'admin@Stockify.io', password: 'admin123', role: 'Super Admin', color: 'from-violet-500 to-purple-600' },
+  { label: 'Manager', email: 'manager@Stockify.io', password: 'manager123', role: 'Inventory Manager', color: 'from-blue-500 to-cyan-600' },
+  { label: 'Viewer', email: 'viewer@Stockify.io', password: 'viewer123', role: 'Read Only', color: 'from-emerald-500 to-teal-600' },
 ]
 
 const FEATURES = [
@@ -70,7 +70,7 @@ export function AuthPage({ onLogin }: AuthProps) {
     setLoading(true)
     setTimeout(() => {
       setLoading(false)
-      toast.success('Account created! Welcome to StockFlow.')
+      toast.success('Account created! Welcome to Stockify.')
       onLogin({ name: data.full_name, email: data.email, role: 'Admin' })
     }, 1200)
   }
@@ -99,7 +99,7 @@ export function AuthPage({ onLogin }: AuthProps) {
             <Zap className="w-5 h-5 text-navy-900" strokeWidth={2.5} />
           </div>
           <div>
-            <h1 className="text-white font-heading font-bold text-xl leading-none">StockFlow</h1>
+            <h1 className="text-white font-heading font-bold text-xl leading-none">Stockify</h1>
             <p className="text-white/40 text-xs mt-0.5">Inventory Platform</p>
           </div>
         </div>
@@ -161,7 +161,7 @@ export function AuthPage({ onLogin }: AuthProps) {
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-golden-400 to-golden-600 flex items-center justify-center">
             <Zap className="w-4.5 h-4.5 text-navy-900" strokeWidth={2.5} />
           </div>
-          <span className="font-heading font-bold text-xl text-foreground">StockFlow</span>
+          <span className="font-heading font-bold text-xl text-foreground">Stockify</span>
         </div>
 
         <div className="w-full max-w-md">
@@ -195,7 +195,7 @@ export function AuthPage({ onLogin }: AuthProps) {
                 {/* Header */}
                 <div className="mb-7">
                   <h2 className="text-2xl font-heading font-bold text-foreground">Welcome back</h2>
-                  <p className="text-muted-foreground text-sm mt-1">Sign in to your StockFlow account</p>
+                  <p className="text-muted-foreground text-sm mt-1">Sign in to your Stockify account</p>
                 </div>
 
                 {/* Demo credentials */}
@@ -466,7 +466,7 @@ export function AuthPage({ onLogin }: AuthProps) {
 
           {/* Footer */}
           <p className="text-center text-xs text-muted-foreground mt-8">
-            By continuing, you agree to StockFlow's{' '}
+            By continuing, you agree to Stockify's{' '}
             <span className="underline cursor-pointer">Terms of Service</span> and{' '}
             <span className="underline cursor-pointer">Privacy Policy</span>
           </p>

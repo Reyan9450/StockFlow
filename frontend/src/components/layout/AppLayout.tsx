@@ -23,7 +23,7 @@ interface AppLayoutProps {
 export function AppLayout({ user, onLogout }: AppLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const location = useLocation()
-  const pageTitle = pageTitles[location.pathname] || 'StockFlow'
+  const pageTitle = pageTitles[location.pathname] || 'Stockify'
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
