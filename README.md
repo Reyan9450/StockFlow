@@ -37,8 +37,10 @@ docker run -p 8000:8000 \
 
 | Role | Email | Password | Access |
 |---|---|---|---|
-| Manager | `manager@stockify.io` | `manager123` | Full access — create, edit, delete |
-| Viewer | `viewer@stockify.io` | `viewer123` | Read-only — view data only |
+| Manager | `manager@stockify.io` | `manager123` | Full access — create, edit, delete, invite viewers |
+| Viewer | `viewer@stockify.io` | `viewer123` | Read-only — view all data, no mutations |
+
+> **Invited Viewers** — Manager can add custom viewers from Settings → Team Members. Invited viewers log in with their email and default password `viewer123`.
 
 ---
 
@@ -72,6 +74,8 @@ Stockify is a modern SaaS-grade inventory management system designed to look and
 
 ## Features
 
+- **Landing Page** — scrollable marketing page below login with animated stats, features, how-it-works, testimonials, tech stack, and CTA sections
+- **Mobile Responsive** — fully responsive on all screen sizes (mobile, tablet, desktop)
 - **Dashboard** — KPI cards, revenue area chart, weekly orders bar chart, warehouse grid, recent orders table, low stock alerts
 - **Products** — Full CRUD with search, category filter, stock status badges, SKU uniqueness enforcement
 - **Customers** — CRM-style card/table view toggle, customer profiles with order counts
@@ -81,6 +85,7 @@ Stockify is a modern SaaS-grade inventory management system designed to look and
 - **Settings** — Profile, theme (dark/light), notifications, API settings, security
 - **Dark Mode** — Full dark theme persisted in localStorage
 - **Role-Based Access** — Manager (full access) and Viewer (read-only) roles
+- **Team Members** — Manager can invite Viewers by email via Settings → Team Members. Invited viewers log in with their email + password `viewer123`
 
 ---
 
