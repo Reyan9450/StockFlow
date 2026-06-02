@@ -22,6 +22,9 @@ services:
 
   # ── Backend ──────────────────────────────────────────────────────────────────
   backend:
+    # Use pre-built image from Docker Hub:
+    # image: reyan9450/stockify-backend
+    # Or build locally:
     build:
       context: ./backend
       dockerfile: Dockerfile

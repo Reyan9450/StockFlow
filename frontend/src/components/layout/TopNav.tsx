@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Bell, Search, Sun, Moon, Menu, ChevronDown, User, Settings, LogOut } from 'lucide-react'
 import { useTheme } from '@/hooks/useTheme'
+import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { getInitials, generateAvatarColor } from '@/lib/utils'
 import type { AuthUser } from '@/hooks/useAuth'
@@ -17,6 +18,7 @@ export function TopNav({ onMenuClick, pageTitle, user, onLogout }: TopNavProps) 
   const { theme, toggleTheme } = useTheme()
   const [profileOpen, setProfileOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
+  const navigate = useNavigate()
 
   const today = new Intl.DateTimeFormat('en-US', {
     weekday: 'short',
@@ -27,6 +29,11 @@ export function TopNav({ onMenuClick, pageTitle, user, onLogout }: TopNavProps) 
 
   const initials = user ? getInitials(user.name) : 'AU'
   const avatarGradient = user ? generateAvatarColor(user.name) : 'from-violet-500 to-purple-600'
+
+  const handleNav = (path: string) => {
+    setProfileOpen(false)
+    navigate(path)
+  }
 
   return (
     <header className="h-[72px] bg-card border-b border-border flex items-center px-4 lg:px-6 gap-4 sticky top-0 z-30">
@@ -114,7 +121,7 @@ export function TopNav({ onMenuClick, pageTitle, user, onLogout }: TopNavProps) 
           )}
         </div>
 
-        {/* Profile */}
+        {/* Profile dropdown */}
         <div className="relative">
           <motion.button
             whileTap={{ scale: 0.95 }}
@@ -125,8 +132,8 @@ export function TopNav({ onMenuClick, pageTitle, user, onLogout }: TopNavProps) 
               {initials}
             </div>
             <div className="hidden sm:block text-left">
-              <p className="text-sm font-semibold text-foreground leading-none">{user?.name ?? 'Admin'}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{user?.role ?? 'Super Admin'}</p>
+              <p className="text-sm font-semibold text-foreground leading-none">{user?.name ?? 'User'}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{user?.role ?? 'Viewer'}</p>
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-muted-foreground hidden sm:block" />
           </motion.button>
@@ -137,24 +144,38 @@ export function TopNav({ onMenuClick, pageTitle, user, onLogout }: TopNavProps) 
               animate={{ opacity: 1, y: 0, scale: 1 }}
               className="absolute right-0 top-full mt-2 w-52 bg-card border border-border rounded-2xl shadow-modal p-2 z-50"
             >
+              {/* User info */}
               <div className="px-3 py-2 mb-1">
-                <p className="text-sm font-semibold text-foreground">{user?.name ?? 'Admin User'}</p>
-                <p className="text-xs text-muted-foreground">{user?.email ?? 'admin@stockify.io'}</p>
+                <p className="text-sm font-semibold text-foreground">{user?.name ?? 'User'}</p>
+                <p className="text-xs text-muted-foreground">{user?.email ?? ''}</p>
+                <span className="inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                  {user?.role ?? 'Viewer'}
+                </span>
               </div>
+
               <div className="border-t border-border my-1" />
-              {[
-                { icon: User, label: 'Profile' },
-                { icon: Settings, label: 'Settings' },
-              ].map((item) => (
-                <button
-                  key={item.label}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                >
-                  <item.icon className="w-4 h-4" />
-                  {item.label}
-                </button>
-              ))}
+
+              {/* Profile — navigates to /settings */}
+              <button
+                onClick={() => handleNav('/settings')}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              >
+                <User className="w-4 h-4" />
+                Profile
+              </button>
+
+              {/* Settings — navigates to /settings */}
+              <button
+                onClick={() => handleNav('/settings')}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              >
+                <Settings className="w-4 h-4" />
+                Settings
+              </button>
+
               <div className="border-t border-border my-1" />
+
+              {/* Logout */}
               <button
                 onClick={() => { setProfileOpen(false); onLogout() }}
                 className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"

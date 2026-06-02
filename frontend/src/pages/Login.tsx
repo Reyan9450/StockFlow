@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { Eye, EyeOff, Zap, ArrowRight, Package, Users, ShoppingCart, BarChart3, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { findTeamMemberByEmail } from '@/hooks/useTeam'
 
 const loginSchema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -55,13 +56,27 @@ export function AuthPage({ onLogin }: AuthProps) {
     setLoading(true)
     setTimeout(() => {
       setLoading(false)
-      // Accept any of the demo credentials or any email/password combo
-      const demo = DEMO_CREDENTIALS.find(d => d.email === data.email && d.password === data.password)
-      const user = demo
-        ? { name: demo.label + ' User', email: demo.email, role: demo.role }
-        : { name: 'Admin User', email: data.email, role: 'Super Admin' }
-      toast.success(`Welcome back, ${user.name.split(' ')[0]}!`)
-      onLogin(user)
+
+      // 1. Check built-in demo credentials
+      const demo = DEMO_CREDENTIALS.find(
+        d => d.email.toLowerCase() === data.email.toLowerCase() && d.password === data.password
+      )
+      if (demo) {
+        toast.success(`Welcome back, ${demo.label}!`)
+        onLogin({ name: demo.label + ' User', email: demo.email, role: demo.role })
+        return
+      }
+
+      // 2. Check manager-invited team members (password = "viewer123")
+      const invited = findTeamMemberByEmail(data.email)
+      if (invited && data.password === 'viewer123') {
+        toast.success(`Welcome, ${invited.name}!`)
+        onLogin({ name: invited.name, email: invited.email, role: 'Read Only' })
+        return
+      }
+
+      // 3. Invalid credentials
+      loginForm.setError('password', { message: 'Invalid email or password' })
     }, 1200)
   }
 
@@ -69,8 +84,9 @@ export function AuthPage({ onLogin }: AuthProps) {
     setLoading(true)
     setTimeout(() => {
       setLoading(false)
+      // New signups get Viewer role (read-only) by default
       toast.success('Account created! Welcome to Stockify.')
-      onLogin({ name: data.full_name, email: data.email, role: 'Admin' })
+      onLogin({ name: data.full_name, email: data.email, role: 'Read Only' })
     }, 1200)
   }
 
