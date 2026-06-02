@@ -37,7 +37,7 @@ const productSchema = z.object({
 
 type ProductFormData = z.infer<typeof productSchema>
 
-export function Products() {
+export function Products({ canEdit = true }: { canEdit?: boolean }) {
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('')
@@ -141,9 +141,11 @@ export function Products() {
           <h1 className="text-3xl font-heading font-bold text-foreground">Products</h1>
           <p className="text-muted-foreground mt-1">Manage your inventory catalog</p>
         </div>
-        <Button icon={<Plus className="w-4 h-4" />} onClick={openCreate}>
-          Add Product
-        </Button>
+        {canEdit && (
+          <Button icon={<Plus className="w-4 h-4" />} onClick={openCreate}>
+            Add Product
+          </Button>
+        )}
       </motion.div>
 
       {/* Filters */}
@@ -219,9 +221,11 @@ export function Products() {
                       </div>
                       <p className="text-base font-semibold text-foreground">No products found</p>
                       <p className="text-sm text-muted-foreground">Add your first product to get started</p>
-                      <Button icon={<Plus className="w-4 h-4" />} onClick={openCreate} size="sm">
-                        Add Product
-                      </Button>
+                      {canEdit && (
+                        <Button icon={<Plus className="w-4 h-4" />} onClick={openCreate} size="sm">
+                          Add Product
+                        </Button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -278,22 +282,24 @@ export function Products() {
                         {formatDate(product.created_at)}
                       </td>
                       <td className="px-5 py-4">
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <motion.button
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => openEdit(product)}
-                            className="p-2 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/30 text-muted-foreground hover:text-blue-600 transition-colors"
-                          >
-                            <Edit2 className="w-3.5 h-3.5" />
-                          </motion.button>
-                          <motion.button
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => setDeleteConfirm(product)}
-                            className="p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/30 text-muted-foreground hover:text-red-600 transition-colors"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </motion.button>
-                        </div>
+                        {canEdit && (
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <motion.button
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => openEdit(product)}
+                              className="p-2 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/30 text-muted-foreground hover:text-blue-600 transition-colors"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </motion.button>
+                            <motion.button
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => setDeleteConfirm(product)}
+                              className="p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/30 text-muted-foreground hover:text-red-600 transition-colors"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </motion.button>
+                          </div>
+                        )}
                       </td>
                     </motion.tr>
                   )

@@ -13,7 +13,7 @@ import { AuthPage } from '@/pages/Login'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function App() {
-  const { user, login, logout, isAuthenticated } = useAuth()
+  const { user, login, logout, isAuthenticated, isViewer, canEdit } = useAuth()
 
   return (
     <BrowserRouter>
@@ -34,11 +34,11 @@ export default function App() {
         <AuthPage onLogin={login} />
       ) : (
         <Routes>
-          <Route element={<AppLayout user={user} onLogout={logout} />}>
+          <Route element={<AppLayout user={user} onLogout={logout} isViewer={isViewer} />}>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/customers" element={<Customers />} />
-            <Route path="/orders" element={<Orders />} />
+            <Route path="/products" element={<Products canEdit={canEdit} />} />
+            <Route path="/customers" element={<Customers canEdit={canEdit} />} />
+            <Route path="/orders" element={<Orders canEdit={canEdit} />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/settings" element={<Settings />} />

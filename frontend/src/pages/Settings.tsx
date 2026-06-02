@@ -1,16 +1,20 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { User, Palette, Bell, Key, Shield, Save, Sun, Moon, Monitor, Check } from 'lucide-react'
+import { User, Palette, Bell, Key, Shield, Save, Sun, Moon, Monitor, Check, Users, Trash2, UserPlus } from 'lucide-react'
 import { useTheme } from '@/hooks/useTheme'
+import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { getTeamMembers, addTeamMember, removeTeamMember, type TeamMember } from '@/hooks/useTeam'
+import { formatDate } from '@/lib/utils'
 
-const tabs = [
+const ALL_TABS = [
   { id: 'profile', label: 'Profile', icon: User },
   { id: 'theme', label: 'Theme', icon: Palette },
   { id: 'notifications', label: 'Notifications', icon: Bell },
+  { id: 'team', label: 'Team Members', icon: Users, managerOnly: true },
   { id: 'api', label: 'API Settings', icon: Key },
   { id: 'security', label: 'Security', icon: Shield },
 ]
@@ -342,8 +346,159 @@ const tabContent: Record<string, React.ReactNode> = {
   security: <SecurityTab />,
 }
 
+function TeamTab() {
+  const { user } = useAuth()
+  const [members, setMembers] = useState<TeamMember[]>(getTeamMembers)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [adding, setAdding] = useState(false)
+
+  const handleAdd = () => {
+    if (!name.trim() || !email.trim()) {
+      toast.error('Name and email are required')
+      return
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error('Enter a valid email address')
+      return
+    }
+    setAdding(true)
+    setTimeout(() => {
+      const result = addTeamMember(name.trim(), email.trim())
+      if (!result) {
+        toast.error('A viewer with this email already exists')
+      } else {
+        setMembers(getTeamMembers())
+        setName('')
+        setEmail('')
+        toast.success(`Viewer access granted to ${name}`)
+      }
+      setAdding(false)
+    }, 600)
+  }
+
+  const handleRemove = (id: string, memberName: string) => {
+    removeTeamMember(id)
+    setMembers(getTeamMembers())
+    toast.success(`Removed ${memberName}`)
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Info banner */}
+      <div className="p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/30 rounded-2xl">
+        <p className="text-sm font-medium text-blue-700 dark:text-blue-400">How it works</p>
+        <p className="text-xs text-blue-600/80 dark:text-blue-400/70 mt-1">
+          Invite viewers by entering their name and email. They can log in with their email and the default password <strong>viewer123</strong>. Viewers can see all data but cannot add, edit, or delete anything.
+        </p>
+      </div>
+
+      {/* Add viewer form */}
+      <div>
+        <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+          <UserPlus className="w-4 h-4" />
+          Invite a Viewer
+        </h3>
+        <div className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Input
+              label="Full Name"
+              placeholder="e.g. Sarah Williams"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <Input
+              label="Email Address"
+              type="email"
+              placeholder="sarah@company.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className="p-3 bg-muted/50 rounded-2xl text-xs text-muted-foreground">
+            Default login password: <span className="font-mono font-semibold text-foreground">viewer123</span>
+            <span className="ml-2 text-muted-foreground">(share this with the viewer)</span>
+          </div>
+          <Button
+            icon={<UserPlus className="w-4 h-4" />}
+            loading={adding}
+            onClick={handleAdd}
+          >
+            Add Viewer
+          </Button>
+        </div>
+      </div>
+
+      {/* Members list */}
+      <div>
+        <h3 className="font-semibold text-foreground mb-3">
+          Active Viewers
+          <span className="ml-2 text-sm font-normal text-muted-foreground">({members.length})</span>
+        </h3>
+
+        {members.length === 0 ? (
+          <div className="py-10 text-center border-2 border-dashed border-border rounded-2xl">
+            <Users className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+            <p className="text-sm font-medium text-foreground">No viewers invited yet</p>
+            <p className="text-xs text-muted-foreground mt-1">Add a viewer above to get started</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {members.map((member) => (
+              <motion.div
+                key={member.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center justify-between p-4 bg-muted/30 rounded-2xl border border-border group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-xs font-bold">
+                    {member.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{member.name}</p>
+                    <p className="text-xs text-muted-foreground">{member.email}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-medium px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 rounded-full">
+                    Read Only
+                  </span>
+                  <span className="text-xs text-muted-foreground hidden sm:block">
+                    Added {formatDate(member.addedAt)}
+                  </span>
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleRemove(member.id, member.name)}
+                    className="p-1.5 rounded-xl opacity-0 group-hover:opacity-100 hover:bg-red-50 dark:hover:bg-red-950/30 text-muted-foreground hover:text-red-600 transition-all"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </motion.button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export function Settings() {
+  const { user, canEdit } = useAuth()
   const [activeTab, setActiveTab] = useState('profile')
+
+  // Only show Team tab to Manager role
+  const tabs = ALL_TABS.filter(t => !('managerOnly' in t) || canEdit)
+
+  const tabContent: Record<string, React.ReactNode> = {
+    profile: <ProfileTab />,
+    theme: <ThemeTab />,
+    notifications: <NotificationsTab />,
+    team: <TeamTab />,
+    api: <ApiTab />,
+    security: <SecurityTab />,
+  }
 
   return (
     <div className="p-6 lg:p-8 max-w-[1200px] mx-auto">

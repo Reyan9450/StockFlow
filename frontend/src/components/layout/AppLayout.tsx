@@ -18,9 +18,10 @@ const pageTitles: Record<string, string> = {
 interface AppLayoutProps {
   user: AuthUser | null
   onLogout: () => void
+  isViewer: boolean
 }
 
-export function AppLayout({ user, onLogout }: AppLayoutProps) {
+export function AppLayout({ user, onLogout, isViewer }: AppLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const location = useLocation()
   const pageTitle = pageTitles[location.pathname] || 'Stockify'
