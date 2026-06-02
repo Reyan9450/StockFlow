@@ -2,11 +2,30 @@
 
 > A production-ready, cloud-based inventory, customer, and order management platform built with React, FastAPI, and PostgreSQL.
 
-![Stockify Dashboard](https://img.shields.io/badge/Status-Live-brightgreen) ![Version](https://img.shields.io/badge/Version-1.0.0-blue) ![License](https://img.shields.io/badge/License-MIT-yellow)
+![Stockify Dashboard](https://img.shields.io/badge/Status-Live-brightgreen) ![Version](https://img.shields.io/badge/Version-1.0.0-blue) ![License](https://img.shields.io/badge/License-MIT-yellow) [![Docker](https://img.shields.io/badge/Docker-reyan9450%2Fstockify--backend-2496ED?logo=docker&logoColor=white)](https://hub.docker.com/r/reyan9450/stockify-backend)
 
 ---
 
-## 🔗 Live Demo
+## � Docker Images
+
+| Image | Link |
+|---|---|
+| **Backend** | [hub.docker.com/r/reyan9450/stockify-backend](https://hub.docker.com/r/reyan9450/stockify-backend) |
+
+Pull and run the backend directly:
+
+```bash
+docker pull reyan9450/stockify-backend
+docker run -p 8000:8000 \
+  -e DATABASE_URL=postgresql://user:pass@host:5432/db \
+  -e SECRET_KEY=your-secret-key \
+  -e CORS_ORIGINS=http://localhost:3001 \
+  reyan9450/stockify-backend
+```
+
+---
+
+## �🔗 Live Demo
 
 | Service | URL |
 |---|---|
@@ -218,6 +237,8 @@ Interactive API docs available at:
 5. Deploy
 
 ### Backend → Railway
+
+> **Or use the pre-built Docker image:** [`reyan9450/stockify-backend`](https://hub.docker.com/r/reyan9450/stockify-backend)
 
 1. Create new project on [Railway](https://railway.app)
 2. Add **PostgreSQL** plugin — Railway injects `DATABASE_URL` automatically
